@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:refund_class/screen/add_lecture_screen.dart';
 import 'package:refund_class/widget/lecture_list_widget.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
             fontSize: 20.0,
           ),
         ),
-        scaffoldBackgroundColor: Colors.brown[50],
+        scaffoldBackgroundColor: Colors.white,
         textTheme: GoogleFonts.notoSansKrTextTheme(),
       ),
       home: MainScreen(),
@@ -43,15 +44,30 @@ class MainScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddLectureScreen()));
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        backgroundColor: Colors.green[50],
+        label: Text(
+          '강좌 추가하기',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
         child: Material(
           color: Colors.transparent,
-          child: ListView(children: [
-            sectionRow(),
-            LectureListWidget(),
-            const SizedBox(height: 20),
-          ]),
+          child: ListView(
+            children: [
+              sectionRow(),
+              LectureListWidget(),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
@@ -60,17 +76,76 @@ class MainScreen extends ConsumerWidget {
 
 Container sectionRow() {
   return Container(
-    color: Colors.grey[200],
-    child: Row(
-      children: const [
-        Expanded(flex: 3, child: Text('강좌명', style: TextStyle(fontWeight: FontWeight.bold))),
-        Expanded(flex: 1, child: Text('요일', style: TextStyle(fontWeight: FontWeight.bold))),
-        Expanded(flex: 2, child: Text('총 금액', style: TextStyle(fontWeight: FontWeight.bold))),
-        Expanded(flex: 1, child: Text('총 횟수', style: TextStyle(fontWeight: FontWeight.bold))),
-        Expanded(flex: 1, child: Text('남은 횟수', style: TextStyle(fontWeight: FontWeight.bold))),
-        Expanded(flex: 2, child: Text('단가', style: TextStyle(fontWeight: FontWeight.bold))),
-        Expanded(flex: 2, child: Text('환불 금액', style: TextStyle(fontWeight: FontWeight.bold))),
-      ],
+    color: Colors.red[100],
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: const [
+          Expanded(
+            flex: 3,
+            child: Center(
+              child: Text(
+                '강좌명',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: Text(
+                '요일',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                '총 금액',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: Text(
+                '총 횟수',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                '남은 횟수',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                '단가',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                '환불 금액',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ),
+        ],
+      ),
     ),
   );
 }
