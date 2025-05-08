@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:refund_class/widget/lecture_list_widget.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,9 +47,30 @@ class MainScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
         child: Material(
           color: Colors.transparent,
-          child: ListView(children: []),
+          child: ListView(children: [
+            sectionRow(),
+            LectureListWidget(),
+            const SizedBox(height: 20),
+          ]),
         ),
       ),
     );
   }
+}
+
+Container sectionRow() {
+  return Container(
+    color: Colors.grey[200],
+    child: Row(
+      children: const [
+        Expanded(flex: 3, child: Text('강좌명', style: TextStyle(fontWeight: FontWeight.bold))),
+        Expanded(flex: 1, child: Text('요일', style: TextStyle(fontWeight: FontWeight.bold))),
+        Expanded(flex: 2, child: Text('총 금액', style: TextStyle(fontWeight: FontWeight.bold))),
+        Expanded(flex: 1, child: Text('총 횟수', style: TextStyle(fontWeight: FontWeight.bold))),
+        Expanded(flex: 1, child: Text('남은 횟수', style: TextStyle(fontWeight: FontWeight.bold))),
+        Expanded(flex: 2, child: Text('단가', style: TextStyle(fontWeight: FontWeight.bold))),
+        Expanded(flex: 2, child: Text('환불 금액', style: TextStyle(fontWeight: FontWeight.bold))),
+      ],
+    ),
+  );
 }

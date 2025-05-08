@@ -133,4 +133,45 @@ class Lecture {
         return DateTime.sunday;
     }
   }
+
+  String weekdayToKorean(Weekday day) {
+    switch (day) {
+      case Weekday.sun:
+        return '일';
+      case Weekday.mon:
+        return '월';
+      case Weekday.tue:
+        return '화';
+      case Weekday.wed:
+        return '수';
+      case Weekday.thu:
+        return '목';
+      case Weekday.fri:
+        return '금';
+      case Weekday.sat:
+        return '토';
+    }
+  }
+
+  Weekday koreanToWeekday(String value) {
+    switch (value) {
+      case '일':
+        return Weekday.sun;
+      case '월':
+        return Weekday.mon;
+      case '화':
+        return Weekday.tue;
+      case '수':
+        return Weekday.wed;
+      case '목':
+        return Weekday.thu;
+      case '금':
+        return Weekday.fri;
+      case '토':
+        return Weekday.sat;
+      default:
+        throw ArgumentError('Invalid weekday string: $value');
+    }
+  }
+
 }
