@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "314516809864",
+    "project_id": "refund-class",
+    "storage_bucket": "refund-class.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314516809864:android:b18e10ffdaced42ed8d73d",
+        "android_client_info": {
+          "package_name": "com.example.refund_class"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBE-_PDZbnZHzfHo_Bm6r90CtXcdFlZRnI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
