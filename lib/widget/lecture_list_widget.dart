@@ -1,8 +1,11 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:refund_class/model/lecture_model.dart';
 import 'package:refund_class/provider/lecture_repository_provider.dart';
 import 'package:refund_class/provider/won_formatter_provider.dart';
+import 'package:refund_class/screen/detail_screen.dart';
 
 class LectureListWidget extends ConsumerWidget {
   const LectureListWidget({super.key});
@@ -20,7 +23,9 @@ class LectureListWidget extends ConsumerWidget {
           itemCount: lectures.length,
           itemBuilder: (context, index) {
             final lecture = lectures[index];
-            final unitPrice = ((lecture.totalFee / lecture.totalSessions)/10).round() * 10;
+            final unitPrice =
+                (lecture.totalFee / lecture.totalSessions).round();
+
             return LectureListInkWell(
               title: lecture.title,
               koreanWeekday:
@@ -32,7 +37,10 @@ class LectureListWidget extends ConsumerWidget {
               formattedRefundPrice: formatter.format(
                 lecture.remainingSessions * unitPrice,
               ),
-              onTap: () {},
+              formattedFinalPrice: formatter.format((lecture.remainingSessions * unitPrice / 10).round() * 10),
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => DetailScreen(lecture: lecture)));
+              },
             );
           },
           separatorBuilder: (_, _) => const Divider(),
@@ -52,6 +60,7 @@ class LectureListInkWell extends StatelessWidget {
   final int remainingSessions;
   final String formattedUnitPrice;
   final String formattedRefundPrice;
+  final String formattedFinalPrice;
   final Function() onTap;
 
   const LectureListInkWell({
@@ -63,7 +72,7 @@ class LectureListInkWell extends StatelessWidget {
     required this.remainingSessions,
     required this.formattedUnitPrice,
     required this.formattedRefundPrice,
-    required this.onTap,
+    required this.onTap, required this.formattedFinalPrice,
   });
 
   @override
@@ -129,7 +138,7 @@ class LectureListInkWell extends StatelessWidget {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 1,
               child: Center(
                 child: Text(
                   formattedUnitPrice,
@@ -143,6 +152,16 @@ class LectureListInkWell extends StatelessWidget {
               child: Center(
                 child: Text(
                   formattedRefundPrice,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Center(
+                child: Text(
+                  formattedFinalPrice,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   overflow: TextOverflow.ellipsis,
                 ),

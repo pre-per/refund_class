@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 enum Weekday { mon, tue, wed, thu, fri, sat, sun }
 
 String weekdayToString(Weekday day) => day.name;
@@ -5,10 +7,94 @@ String weekdayToString(Weekday day) => day.name;
 Weekday weekdayFromString(String value) =>
     Weekday.values.firstWhere((e) => e.name == value);
 
+String weekdayToKorean(Weekday day) {
+  switch (day) {
+    case Weekday.sun:
+      return '일';
+    case Weekday.mon:
+      return '월';
+    case Weekday.tue:
+      return '화';
+    case Weekday.wed:
+      return '수';
+    case Weekday.thu:
+      return '목';
+    case Weekday.fri:
+      return '금';
+    case Weekday.sat:
+      return '토';
+  }
+}
+
+int weekdayToInt(Weekday day) {
+  switch (day) {
+    case Weekday.mon:
+      return DateTime.monday;
+    case Weekday.tue:
+      return DateTime.tuesday;
+    case Weekday.wed:
+      return DateTime.wednesday;
+    case Weekday.thu:
+      return DateTime.thursday;
+    case Weekday.fri:
+      return DateTime.friday;
+    case Weekday.sat:
+      return DateTime.saturday;
+    case Weekday.sun:
+      return DateTime.sunday;
+  }
+}
+
+class LectureTimeSlot {
+  final Weekday day;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
+
+  LectureTimeSlot({
+    required this.day,
+    required this.startTime,
+    required this.endTime,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'day': weekdayToString(day),
+    'startTime': '${startTime.hour}:${startTime.minute}',
+    'endTime': '${endTime.hour}:${endTime.minute}',
+  };
+
+  factory LectureTimeSlot.fromJson(Map<String, dynamic> json) {
+    final startParts = (json['startTime'] as String).split(':');
+    final endParts = (json['endTime'] as String).split(':');
+
+    return LectureTimeSlot(
+      day: weekdayFromString(json['day']),
+      startTime: TimeOfDay(
+        hour: int.parse(startParts[0]),
+        minute: int.parse(startParts[1]),
+      ),
+      endTime: TimeOfDay(
+        hour: int.parse(endParts[0]),
+        minute: int.parse(endParts[1]),
+      ),
+    );
+  }
+
+  String toKoreanString() {
+    return '${weekdayToKorean(day)} ${_formatTime(startTime)}~${_formatTime(endTime)}';
+  }
+
+  String _formatTime(TimeOfDay time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
+}
+
 class Lecture {
   final String? id;
   final String title;
   final List<Weekday> recurringDays;
+  final List<LectureTimeSlot> timeSlots;
   final DateTime startDate;
   final DateTime endDate;
   final int totalFee;
@@ -22,6 +108,7 @@ class Lecture {
     this.id,
     required this.title,
     required this.recurringDays,
+    required this.timeSlots,
     required this.startDate,
     required this.endDate,
     required this.totalFee,
@@ -30,13 +117,14 @@ class Lecture {
     required this.makeupDates,
     String? memo,
     int? remainingSessions,
-  }) : memo = memo ?? '',
-       remainingSessions = remainingSessions ?? -1;
+  })  : memo = memo ?? '',
+        remainingSessions = remainingSessions ?? -1;
 
   Lecture copyWith({
     String? id,
     String? title,
     List<Weekday>? recurringDays,
+    List<LectureTimeSlot>? timeSlots,
     DateTime? startDate,
     DateTime? endDate,
     int? totalFee,
@@ -50,6 +138,7 @@ class Lecture {
       id: id ?? this.id,
       title: title ?? this.title,
       recurringDays: recurringDays ?? this.recurringDays,
+      timeSlots: timeSlots ?? this.timeSlots,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       totalFee: totalFee ?? this.totalFee,
@@ -67,7 +156,7 @@ class Lecture {
     final allDates = <DateTime>[];
     DateTime current = startDate;
     while (!current.isAfter(endDate)) {
-      if (recurringDays.any((day) => current.weekday == _weekdayToInt(day)) &&
+      if (recurringDays.any((day) => current.weekday == weekdayToInt(day)) &&
           !excludedDates.contains(current)) {
         allDates.add(current);
       }
@@ -80,6 +169,7 @@ class Lecture {
   Map<String, dynamic> toJson() => {
     'title': title,
     'recurringDays': recurringDays.map((d) => weekdayToString(d)).toList(),
+    'timeSlots': timeSlots.map((s) => s.toJson()).toList(),
     'startDate': startDate.toIso8601String(),
     'endDate': endDate.toIso8601String(),
     'totalFee': totalFee,
@@ -94,46 +184,26 @@ class Lecture {
     return Lecture(
       id: id,
       title: json['title'],
-      recurringDays:
-          (json['recurringDays'] as List<dynamic>)
-              .map((d) => weekdayFromString(d as String))
-              .toList(),
+      recurringDays: (json['recurringDays'] as List<dynamic>)
+          .map((d) => weekdayFromString(d as String))
+          .toList(),
+      timeSlots: (json['timeSlots'] as List<dynamic>?)
+          ?.map((e) => LectureTimeSlot.fromJson(e))
+          .toList() ?? [], // ← null-safe 처리
       startDate: DateTime.parse(json['startDate']),
       endDate: DateTime.parse(json['endDate']),
       totalFee: json['totalFee'],
       totalSessions: json['totalSessions'],
       remainingSessions: json['remainingSessions'],
       memo: json['memo'],
-      excludedDates:
-          (json['excludedDates'] as List<dynamic>)
-              .map((d) => DateTime.parse(d))
-              .toList(),
-      makeupDates:
-          (json['makeupDates'] as List<dynamic>)
-              .map((d) => DateTime.parse(d))
-              .toList(),
+      excludedDates: (json['excludedDates'] as List<dynamic>)
+          .map((d) => DateTime.parse(d))
+          .toList(),
+      makeupDates: (json['makeupDates'] as List<dynamic>)
+          .map((d) => DateTime.parse(d))
+          .toList(),
     );
   }
-
-  int _weekdayToInt(Weekday day) {
-    switch (day) {
-      case Weekday.mon:
-        return DateTime.monday;
-      case Weekday.tue:
-        return DateTime.tuesday;
-      case Weekday.wed:
-        return DateTime.wednesday;
-      case Weekday.thu:
-        return DateTime.thursday;
-      case Weekday.fri:
-        return DateTime.friday;
-      case Weekday.sat:
-        return DateTime.saturday;
-      case Weekday.sun:
-        return DateTime.sunday;
-    }
-  }
-
 
 
   Weekday koreanToWeekday(String value) {
@@ -155,25 +225,5 @@ class Lecture {
       default:
         throw ArgumentError('Invalid weekday string: $value');
     }
-  }
-
-}
-
-String weekdayToKorean(Weekday day) {
-  switch (day) {
-    case Weekday.sun:
-      return '일';
-    case Weekday.mon:
-      return '월';
-    case Weekday.tue:
-      return '화';
-    case Weekday.wed:
-      return '수';
-    case Weekday.thu:
-      return '목';
-    case Weekday.fri:
-      return '금';
-    case Weekday.sat:
-      return '토';
   }
 }

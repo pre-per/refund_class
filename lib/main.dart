@@ -124,7 +124,7 @@ Container sectionRow() {
             ),
           ),
           Expanded(
-            flex: 2,
+            flex: 1,
             child: Center(
               child: Text(
                 '단가',
@@ -137,6 +137,15 @@ Container sectionRow() {
             child: Center(
               child: Text(
                 '환불 금액',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Center(
+              child: Text(
+                '최종 환불 금액',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
