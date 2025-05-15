@@ -8,11 +8,14 @@ class LectureRepository {
     await _db.collection('lectures').add(lecture.toJson());
   }
 
-  Future<List<Lecture>> getLectures() async {
-    final snapshot = await _db.collection('lectures').get();
-
-    return snapshot.docs.map((doc) => Lecture.fromJson(doc.data()).copyWith(id: doc.id)).toList();
+  Stream<List<Lecture>> getLecturesStream() {
+    return FirebaseFirestore.instance
+        .collection('lectures')
+        .snapshots()
+        .map((snapshot) =>
+        snapshot.docs.map((doc) => Lecture.fromJson(doc.data(), id: doc.id)).toList());
   }
+
 
   Future<void> deleteLecture(String docId) async {
     await _db.collection('lectures').doc(docId).delete();

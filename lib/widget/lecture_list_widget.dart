@@ -15,6 +15,7 @@ class LectureListWidget extends ConsumerWidget {
     return lectureAsync.when(
       data: (lectures) {
         return ListView.separated(
+          shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           itemCount: lectures.length,
           itemBuilder: (context, index) {
@@ -23,7 +24,7 @@ class LectureListWidget extends ConsumerWidget {
             return LectureListInkWell(
               title: lecture.title,
               koreanWeekday:
-                  lecture.recurringDays.map(weekdayToString).toList(),
+                  lecture.recurringDays.map(weekdayToKorean).toList(),
               formattedTotalFee: formatter.format(lecture.totalFee),
               totalSessions: lecture.totalSessions,
               remainingSessions: lecture.remainingSessions,
@@ -79,58 +80,72 @@ class LectureListInkWell extends StatelessWidget {
           children: [
             Expanded(
               flex: 3,
-              child: Text(
-                title,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                overflow: TextOverflow.ellipsis,
+              child: Center(
+                child: Text(
+                  title,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             Expanded(
               flex: 1,
-              child: Text(
-                koreanWeekday.join(),
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                overflow: TextOverflow.ellipsis,
+              child: Center(
+                child: Text(
+                  koreanWeekday.join(),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             Expanded(
               flex: 2,
-              child: Text(
-                formattedTotalFee,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                overflow: TextOverflow.ellipsis,
+              child: Center(
+                child: Text(
+                  formattedTotalFee,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             Expanded(
               flex: 1,
-              child: Text(
-                totalSessions.toString(),
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                overflow: TextOverflow.ellipsis,
+              child: Center(
+                child: Text(
+                  totalSessions.toString(),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             Expanded(
               flex: 1,
-              child: Text(
-                remainingSessions.toString(),
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                overflow: TextOverflow.ellipsis,
+              child: Center(
+                child: Text(
+                  remainingSessions.toString(),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             Expanded(
               flex: 2,
-              child: Text(
-                formattedUnitPrice,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                overflow: TextOverflow.ellipsis,
+              child: Center(
+                child: Text(
+                  formattedUnitPrice,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
             Expanded(
               flex: 2,
-              child: Text(
-                formattedRefundPrice,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                overflow: TextOverflow.ellipsis,
+              child: Center(
+                child: Text(
+                  formattedRefundPrice,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ),
           ],

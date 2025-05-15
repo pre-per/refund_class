@@ -134,24 +134,7 @@ class Lecture {
     }
   }
 
-  String weekdayToKorean(Weekday day) {
-    switch (day) {
-      case Weekday.sun:
-        return '일';
-      case Weekday.mon:
-        return '월';
-      case Weekday.tue:
-        return '화';
-      case Weekday.wed:
-        return '수';
-      case Weekday.thu:
-        return '목';
-      case Weekday.fri:
-        return '금';
-      case Weekday.sat:
-        return '토';
-    }
-  }
+
 
   Weekday koreanToWeekday(String value) {
     switch (value) {
@@ -174,4 +157,23 @@ class Lecture {
     }
   }
 
+}
+
+String weekdayToKorean(Weekday day) {
+  switch (day) {
+    case Weekday.sun:
+      return '일';
+    case Weekday.mon:
+      return '월';
+    case Weekday.tue:
+      return '화';
+    case Weekday.wed:
+      return '수';
+    case Weekday.thu:
+      return '목';
+    case Weekday.fri:
+      return '금';
+    case Weekday.sat:
+      return '토';
+  }
 }

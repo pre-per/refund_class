@@ -51,23 +51,20 @@ class MainScreen extends ConsumerWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-        backgroundColor: Colors.green[50],
+        backgroundColor: Colors.blue[50],
         label: Text(
           '강좌 추가하기',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-        child: Material(
-          color: Colors.transparent,
-          child: ListView(
-            children: [
-              sectionRow(),
-              LectureListWidget(),
-              const SizedBox(height: 20),
-            ],
-          ),
+      body: Material(
+        color: Colors.transparent,
+        child: ListView(
+          children: [
+            sectionRow(),
+            LectureListWidget(),
+            const SizedBox(height: 20),
+          ],
         ),
       ),
     );
@@ -76,7 +73,7 @@ class MainScreen extends ConsumerWidget {
 
 Container sectionRow() {
   return Container(
-    color: Colors.red[100],
+    color: Colors.blue[50],
     child: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -94,7 +91,7 @@ Container sectionRow() {
             flex: 1,
             child: Center(
               child: Text(
-                '요일',
+                '반복 요일',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
@@ -118,7 +115,7 @@ Container sectionRow() {
             ),
           ),
           Expanded(
-            flex: 2,
+            flex: 1,
             child: Center(
               child: Text(
                 '남은 횟수',
