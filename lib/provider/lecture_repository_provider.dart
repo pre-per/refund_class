@@ -11,7 +11,7 @@ final lectureListProvider = StreamProvider<List<Lecture>>((ref) async* {
 
   await for (final lectures in repository.getLecturesStream()) {
     for (final lecture in lectures) {
-      final calculated = calculateRemainingClasses(lecture).length;
+      final calculated = getFutureClassDate(lecture).length;
       if (lecture.remainingSessions != calculated) {
         final updated = lecture.copyWith(remainingSessions: calculated);
         await repository.updateLecture(lecture.id!, updated);

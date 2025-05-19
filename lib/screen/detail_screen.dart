@@ -1,5 +1,3 @@
-// 전체 DetailScreen.dart (강의 시간 infoRow로 표시됨)
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -33,46 +31,6 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   String formatDate(DateTime date) => DateFormat('yyyy-MM-dd').format(date);
-
-  DateTime normalize(DateTime d) => DateTime(d.year, d.month, d.day);
-
-  List<DateTime> getScheduledDates(Lecture lecture) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final start = lecture.startDate;
-    final end = lecture.endDate;
-    final recurringWeekdays = lecture.recurringDays.map(weekdayToInt).toSet();
-
-    final scheduled = <DateTime>[];
-
-    for (var date = start; !date.isAfter(end); date = date.add(Duration(days: 1))) {
-      final d = normalize(date);
-      final isAfterNow = d.isAfter(today) || (d.isAtSameMomentAs(today) && _isTimeSlotFuture(d));
-      if (isAfterNow &&
-          recurringWeekdays.contains(date.weekday) &&
-          !lecture.excludedDates.map(normalize).contains(d) &&
-          !lecture.makeupDates.map(normalize).contains(d)) {
-        scheduled.add(d);
-      }
-    }
-
-    return scheduled;
-  }
-
-  bool _isTimeSlotFuture(DateTime date) {
-    final now = TimeOfDay.now();
-    final day = Weekday.values[date.weekday % 7];
-    final slot = lecture.timeSlots.firstWhere(
-          (s) => s.day == day,
-      orElse: () => LectureTimeSlot(
-        day: day,
-        startTime: const TimeOfDay(hour: 0, minute: 0),
-        endTime: const TimeOfDay(hour: 0, minute: 0),
-      ),
-    );
-    return slot.startTime.hour > now.hour ||
-        (slot.startTime.hour == now.hour && slot.startTime.minute > now.minute);
-  }
 
   Future<void> _saveLecture() async {
     lecture = lecture.copyWith(memo: _memoController.text);
@@ -132,8 +90,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final scheduledDates = getScheduledDates(lecture);
-    final remaining = calculateRemainingClasses(lecture);
+    final scheduledDates = getFutureClassDate(lecture);
     final timeInfo = lecture.timeSlots.map((t) =>
     '${weekdayToKorean(t.day)} ${t.startTime.format(context)}~${t.endTime.format(context)}'
     ).join(', ');
@@ -161,7 +118,7 @@ class _DetailScreenState extends State<DetailScreen> {
           _infoRow('총 금액', '${lecture.totalFee}원'),
           _infoRow('총 횟수', '${lecture.totalSessions}회'),
           _infoRow('메모', lecture.memo),
-          _infoRow('남은 수업 횟수', '${remaining.length}회'),
+          _infoRow('남은 수업 횟수', '${scheduledDates.length}회'),
           const SizedBox(height: 20),
           const Divider(),
 
