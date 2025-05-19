@@ -28,7 +28,7 @@ class LectureListWidget extends ConsumerWidget {
           itemBuilder: (context, index) {
             final lecture = filteredLectures[index];
             final unitPrice =
-            (lecture.totalFee / lecture.totalSessions).round();
+            (lecture.totalFee / lecture.totalSessions);
 
             return LectureListInkWell(
               title: lecture.title,
@@ -37,11 +37,11 @@ class LectureListWidget extends ConsumerWidget {
               formattedTotalFee: formatter.format(lecture.totalFee),
               totalSessions: lecture.totalSessions,
               remainingSessions: lecture.remainingSessions,
-              formattedUnitPrice: formatter.format(unitPrice),
+              formattedUnitPrice: formatter.format(unitPrice.ceil()),
               formattedRefundPrice: formatter.format(
-                lecture.remainingSessions * unitPrice,
+                (lecture.remainingSessions * unitPrice).ceil(),
               ),
-              formattedFinalPrice: formatter.format((lecture.remainingSessions * unitPrice / 10).round() * 10),
+              formattedFinalPrice: formatter.format((lecture.remainingSessions * unitPrice / 10).ceil() * 10),
               onTap: () {
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => DetailScreen(lecture: lecture)));
               },
