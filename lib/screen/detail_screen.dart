@@ -34,7 +34,12 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
     super.dispose();
   }
 
-  String formatDate(DateTime date) => DateFormat('yyyy-MM-dd').format(date);
+  String formatDate(DateTime date) {
+    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+    final weekday = weekdays[date.weekday % 7];
+    final dateStr = '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    return '$dateStr ($weekday)';
+  }
 
   Future<void> _saveLecture() async {
     lecture = lecture.copyWith(memo: _memoController.text);

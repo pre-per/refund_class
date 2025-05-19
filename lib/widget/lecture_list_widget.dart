@@ -1,5 +1,4 @@
-import 'dart:ffi';
-
+import 'package:refund_class/provider/search_query_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:refund_class/model/lecture_model.dart';
@@ -14,22 +13,28 @@ class LectureListWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final lectureAsync = ref.watch(lectureListProvider);
     final formatter = ref.watch(currentFormatterProvider);
+    final query = ref.watch(lectureSearchQueryProvider).toLowerCase();
 
     return lectureAsync.when(
       data: (lectures) {
+        // 🔍 검색어에 따라 필터링
+        final filteredLectures = lectures.where((lecture) {
+          return lecture.title.toLowerCase().contains(query);
+        }).toList();
+
         return ListView.separated(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          itemCount: lectures.length,
+          itemCount: filteredLectures.length,
           itemBuilder: (context, index) {
-            final lecture = lectures[index];
+            final lecture = filteredLectures[index];
             final unitPrice =
-                (lecture.totalFee / lecture.totalSessions).round();
+            (lecture.totalFee / lecture.totalSessions).round();
 
             return LectureListInkWell(
               title: lecture.title,
               koreanWeekday:
-                  lecture.recurringDays.map(weekdayToKorean).toList(),
+              lecture.recurringDays.map(weekdayToKorean).toList(),
               formattedTotalFee: formatter.format(lecture.totalFee),
               totalSessions: lecture.totalSessions,
               remainingSessions: lecture.remainingSessions,
@@ -43,14 +48,15 @@ class LectureListWidget extends ConsumerWidget {
               },
             );
           },
-          separatorBuilder: (_, _) => const Divider(),
+          separatorBuilder: (_, __) => const Divider(),
         );
       },
       error: (err, _) => Center(child: Text('오류발생: $err')),
-      loading: () => Center(child: const CircularProgressIndicator()),
+      loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
 }
+
 
 class LectureListInkWell extends StatelessWidget {
   final String title;

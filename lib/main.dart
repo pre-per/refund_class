@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:refund_class/provider/base_time_provider.dart';
+import 'package:refund_class/provider/search_query_provider.dart';
 import 'package:refund_class/screen/add_lecture_screen.dart';
 import 'package:refund_class/widget/lecture_list_widget.dart';
 import 'firebase_options.dart';
@@ -66,6 +67,8 @@ class MainScreen extends ConsumerWidget {
           children: [
             const SizedBox(height: 10),
             _DateTimeSelector(ref: ref, dateTime: baseDateTime),
+            const SizedBox(height: 10),
+            _SearchBar(),
             const SizedBox(height: 10),
             _sectionRow(),
             LectureListWidget(),
@@ -157,6 +160,54 @@ class _DateTimeSelector extends StatelessWidget {
     );
   }
 }
+
+class _SearchBar extends ConsumerStatefulWidget {
+  const _SearchBar({super.key});
+
+  @override
+  ConsumerState<_SearchBar> createState() => _SearchBarState();
+}
+
+class _SearchBarState extends ConsumerState<_SearchBar> {
+  String _input = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: '강좌명 검색',
+          hintStyle: TextStyle(
+            fontSize: 17.0,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
+          ),
+          prefixIcon: const Icon(Icons.search),
+          filled: true,
+          fillColor: Colors.grey[100],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        ),
+        style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          color: Colors.black,
+        ),
+        onChanged: (value) {
+          setState(() {
+            _input = value;
+          });
+          ref.read(lectureSearchQueryProvider.notifier).state = value.trim();
+        },
+      ),
+    );
+  }
+}
+
 
 
 Container _sectionRow() {
