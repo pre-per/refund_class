@@ -41,18 +41,16 @@ bool _isTimeSlotFuture(DateTime date, DateTime baseDateTime, Lecture lecture) {
     ),
   );
 
-  final slotEnd = DateTime(
+  final slotStart = DateTime(
     baseDateTime.year,
     baseDateTime.month,
     baseDateTime.day,
-    slot.endTime.hour,
-    slot.endTime.minute,
+    slot.startTime.hour,
+    slot.startTime.minute,
   );
 
-  return slotEnd.isAfter(baseDateTime);
+  return slotStart.isAfter(baseDateTime);
 }
-
-
 
 Weekday _weekdayFromDate(DateTime date) {
   switch (date.weekday) {

@@ -17,7 +17,6 @@ class LectureListWidget extends ConsumerWidget {
 
     return lectureAsync.when(
       data: (lectures) {
-        // 🔍 검색어에 따라 필터링
         final filteredLectures = lectures.where((lecture) {
           return lecture.title.toLowerCase().contains(query);
         }).toList();
