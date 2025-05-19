@@ -83,7 +83,7 @@ class _AddLectureScreenState extends ConsumerState<AddLectureScreen> {
 
     final sessionDates = <DateTime>[];
     DateTime current = startDate;
-    while (!current.isAfter(endDate)) {
+    while (!current.isAfter(endDate.add(Duration(days: 1)))) {
       if (_recurringDays.any((d) => current.weekday == _weekdayToInt(d)) &&
           !excluded.contains(DateTime(current.year, current.month, current.day))) {
         sessionDates.add(current);
