@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:refund_class/provider/base_time_provider.dart';
 import 'package:refund_class/screen/add_lecture_screen.dart';
 import 'package:refund_class/widget/lecture_list_widget.dart';
 import 'firebase_options.dart';
@@ -43,6 +44,8 @@ class MainScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final baseDateTime = ref.watch(baseTimeProvider);
+
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -61,7 +64,10 @@ class MainScreen extends ConsumerWidget {
         color: Colors.transparent,
         child: ListView(
           children: [
-            sectionRow(),
+            const SizedBox(height: 10),
+            _DateTimeSelector(ref: ref, dateTime: baseDateTime),
+            const SizedBox(height: 10),
+            _sectionRow(),
             LectureListWidget(),
             const SizedBox(height: 20),
           ],
@@ -71,7 +77,89 @@ class MainScreen extends ConsumerWidget {
   }
 }
 
-Container sectionRow() {
+class _DateTimeSelector extends StatelessWidget {
+  final WidgetRef ref;
+  final DateTime dateTime;
+
+  const _DateTimeSelector({required this.ref, required this.dateTime});
+
+  @override
+  Widget build(BuildContext context) {
+    final formatted = '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} '
+        '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+
+    return Column(
+      children: [
+        Text('기준 날짜 및 시간: $formatted', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton.icon(
+              icon: const Icon(Icons.date_range),
+              label: const Text('날짜 선택'),
+              onPressed: () async {
+                final pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: dateTime,
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2100),
+                );
+                if (pickedDate != null) {
+                  final updated = DateTime(
+                    pickedDate.year,
+                    pickedDate.month,
+                    pickedDate.day,
+                    dateTime.hour,
+                    dateTime.minute,
+                  );
+                  ref.read(baseTimeProvider.notifier).state = updated;
+                }
+              },
+            ),
+            const SizedBox(width: 10),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.access_time),
+              label: const Text('시간 선택'),
+              onPressed: () async {
+                final pickedTime = await showTimePicker(
+                  context: context,
+                  initialTime: TimeOfDay.fromDateTime(dateTime),
+                );
+                if (pickedTime != null) {
+                  final updated = DateTime(
+                    dateTime.year,
+                    dateTime.month,
+                    dateTime.day,
+                    pickedTime.hour,
+                    pickedTime.minute,
+                  );
+                  ref.read(baseTimeProvider.notifier).state = updated;
+                }
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ElevatedButton.icon(
+          icon: const Icon(Icons.today),
+          label: const Text('오늘로 돌아가기'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[200],
+            foregroundColor: Colors.black,
+          ),
+          onPressed: () {
+            ref.read(baseTimeProvider.notifier).state = DateTime.now();
+          },
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+}
+
+
+Container _sectionRow() {
   return Container(
     color: Colors.blue[50],
     child: Padding(

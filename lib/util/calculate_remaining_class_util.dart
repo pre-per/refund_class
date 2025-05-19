@@ -3,31 +3,34 @@ import '../model/lecture_model.dart';
 
 DateTime normalize(DateTime d) => DateTime(d.year, d.month, d.day);
 
-List<DateTime> getFutureClassDate(Lecture lecture) {
-  final now = DateTime.now();
-  final today = DateTime(now.year, now.month, now.day);
+List<DateTime> getFutureClassDate(Lecture lecture, DateTime baseDateTime) {
+  final today = DateTime(baseDateTime.year, baseDateTime.month, baseDateTime.day);
   final start = lecture.startDate;
   final end = lecture.endDate;
   final recurringWeekdays = lecture.recurringDays.map(weekdayToInt).toSet();
 
-  final scheduled = <DateTime>[];
+  final excludedDates = lecture.excludedDates.map(normalize).toSet();
+  final makeupDates = lecture.makeupDates.map(normalize).where((d) => d.isAfter(today)).toSet();
+
+  final scheduled = <DateTime>{};
 
   for (var date = start; !date.isAfter(end); date = date.add(Duration(days: 1))) {
     final d = normalize(date);
-    final isAfterNow = d.isAfter(today) || (d.isAtSameMomentAs(today) && _isTimeSlotFuture(d, lecture));
-    if (isAfterNow &&
+    final isAfterSelected = d.isAfter(today) ||
+        (d.isAtSameMomentAs(today) && _isTimeSlotFuture(d, baseDateTime, lecture));
+    if (isAfterSelected &&
         recurringWeekdays.contains(date.weekday) &&
-        !lecture.excludedDates.map(normalize).contains(d) &&
-        !lecture.makeupDates.map(normalize).contains(d)) {
+        !excludedDates.contains(d)) {
       scheduled.add(d);
     }
   }
 
-  return scheduled;
+  scheduled.addAll(makeupDates);
+
+  return scheduled.toList()..sort();
 }
 
-bool _isTimeSlotFuture(DateTime date, Lecture lecture) {
-  final now = TimeOfDay.now();
+bool _isTimeSlotFuture(DateTime date, DateTime baseDateTime, Lecture lecture) {
   final day = _weekdayFromDate(date);
   final slot = lecture.timeSlots.firstWhere(
         (s) => s.day == day,
@@ -37,9 +40,19 @@ bool _isTimeSlotFuture(DateTime date, Lecture lecture) {
       endTime: const TimeOfDay(hour: 0, minute: 0),
     ),
   );
-  return slot.endTime.hour > now.hour ||
-      (slot.endTime.hour == now.hour && slot.endTime.minute > now.minute);
+
+  final slotEnd = DateTime(
+    baseDateTime.year,
+    baseDateTime.month,
+    baseDateTime.day,
+    slot.endTime.hour,
+    slot.endTime.minute,
+  );
+
+  return slotEnd.isAfter(baseDateTime);
 }
+
+
 
 Weekday _weekdayFromDate(DateTime date) {
   switch (date.weekday) {

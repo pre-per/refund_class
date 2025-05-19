@@ -27,7 +27,7 @@ class _RecurringDateSelectorState extends State<RecurringDateSelector> {
   List<DateTime> get _recurringDates {
     List<DateTime> result = [];
     DateTime current = widget.startDate;
-    while (!current.isAfter(widget.endDate)) {
+    while (!current.isAfter(widget.endDate.add(Duration(days: 1)))) {
       if (widget.recurringDays.any((day) => current.weekday == _weekdayToInt(day))) {
         result.add(DateTime(current.year, current.month, current.day)); // normalize
       }
