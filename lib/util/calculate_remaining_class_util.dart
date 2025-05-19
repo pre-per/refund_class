@@ -6,7 +6,7 @@ DateTime normalize(DateTime d) => DateTime(d.year, d.month, d.day);
 List<DateTime> getFutureClassDate(Lecture lecture, DateTime baseDateTime) {
   final today = DateTime(baseDateTime.year, baseDateTime.month, baseDateTime.day);
   final start = lecture.startDate;
-  final end = lecture.endDate;
+  final end = lecture.endDate.add(Duration(days: 1));
   final recurringWeekdays = lecture.recurringDays.map(weekdayToInt).toSet();
 
   final excludedDates = lecture.excludedDates.map(normalize).toSet();

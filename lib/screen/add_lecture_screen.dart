@@ -90,8 +90,9 @@ class _AddLectureScreenState extends ConsumerState<AddLectureScreen> {
       }
       current = current.add(const Duration(days: 1));
     }
-    final totalSessions = sessionDates.length;
-    final remainingSessions = totalSessions;
+    final int totalSessions = sessionDates.length;
+    final int remainingSessions = totalSessions;
+
 
     final timeSlots = _weekdayTimes.entries.map((e) {
       return LectureTimeSlot(
@@ -403,7 +404,7 @@ class _DaysInkWell extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
 
-  const _DaysInkWell({super.key, required this.isSelected, required this.text, required this.onTap});
+  const _DaysInkWell({required this.isSelected, required this.text, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
